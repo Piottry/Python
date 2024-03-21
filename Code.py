@@ -47,8 +47,7 @@ def update():
 
 
 
-    random_color=[randint(0,55),randint(0,255),randint(0,255)]
-    object_1.color=rgb(random_color[0],random_color[1],random_color[2])
+
     
 
 
@@ -62,9 +61,9 @@ def update():
 def input(key):
     global paused
     if held_keys['space']:
-        player.y += 1* time.dt
+        player.y += 100 * time.dt
     if held_keys['control']:
-        player.y -= 1 * time.dt
+        player.y -= 100 * time.dt
 
 
 
@@ -102,6 +101,11 @@ class Planet(Entity):
 sun = Planet(0,0,0,100,'assets/8k_sun')
 sun.sun=True
 
+
+
+
+
+
 mercury=Planet(60,0,0,0.35035,'assets/mercury')
 venus=Planet(70,0,0,0.8609,'assets/venus1')
 
@@ -122,7 +126,8 @@ moon = Planet(80,2,0,0.05,'assets/Moon')
 
 
 ### TRUC ###
-saturnRing=Entity(model="assets/ggg.obj",
+saturnRing=Entity(model="assets/saturnring.obj",
+            shader = lit_with_shadows_shader,
             scale=1,
             parent=saturn,
             texture='assets/saturn_ring',
@@ -130,12 +135,8 @@ saturnRing=Entity(model="assets/ggg.obj",
             rotation=(0,0,23),
             collider='mesh'
 
+            )
 
-
-
-
-)
-object_1 = Planet(0,0,0,1,'')
 
 
 

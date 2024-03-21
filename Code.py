@@ -101,13 +101,8 @@ sun.sun=True
 mercury=Planet(60,0,0,0.35035,'assets/mercury')
 venus=Planet(70,0,0,0.8609,'assets/venus1')
 
-
-
-
 earth=Planet(80,0,0,0.9159,'assets/earth')
 earth.rotation_z=45
-
-
 
 mars=Planet(90,0,0,0.4876,'assets/mars')
 jupiter=Planet(110,0,0,10.2667,'assets/jupiter')
@@ -115,8 +110,22 @@ saturn=Planet(140,0,0,3.5562,'assets/saturn')
 uranus=Planet(180,0,0,3.6704,'assets/uranus')
 neptune = Planet(210,0,0,3.5562,'assets/neptune')
 
+
+
+### MOONS ###
 moon = Planet(80,2,0,0.05,'assets/Moon')
 
+
+
+### TRUC ###
+test=Entity(model="assets/ggg.obj",
+            scale=1,
+            color=color.white,
+            position=(140, 0, 0),
+            collider='mesh'
+
+
+)
 object_1 = Planet(0,0,0,1,'')
 
 

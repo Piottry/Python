@@ -107,6 +107,8 @@ saturn=Planet(140,0,0,3.5562,'assets/saturn')
 uranus=Planet(180,0,0,3.6704,'assets/uranus')
 neptune = Planet(210,0,0,3.5562,'assets/neptune')
 
+moon = Planet(80,2,0,0.05,'assets/Moon')
+
 object_1 = Planet(0,0,0,1,'')
 
 

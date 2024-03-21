@@ -30,7 +30,7 @@ def update():
         sun.rotation_y+=0.000034
         mercury.rotation_y+=0.007
         venus.rotation_y+=0.0000017
-        earth.rotation_y+=0.00041*10*60*60
+        earth.rotation_y+=0.00041*100
         mars.rotation_y+=0.0004
         jupiter.rotation_y+=0.001
         saturn.rotation_y+=0.0022
@@ -58,9 +58,9 @@ def update():
 def input(key):
     global paused
     if held_keys['space']:
-        player.y += 1000 * time.dt
+        player.y += 1* time.dt
     if held_keys['control']:
-        player.y -= 1000 * time.dt
+        player.y -= 1 * time.dt
 
 
 
@@ -100,7 +100,15 @@ sun.sun=True
 
 mercury=Planet(60,0,0,0.35035,'assets/mercury')
 venus=Planet(70,0,0,0.8609,'assets/venus1')
+
+
+
+
 earth=Planet(80,0,0,0.9159,'assets/earth')
+earth.rotation_z=45
+
+
+
 mars=Planet(90,0,0,0.4876,'assets/mars')
 jupiter=Planet(110,0,0,10.2667,'assets/jupiter')
 saturn=Planet(140,0,0,3.5562,'assets/saturn')
@@ -114,13 +122,13 @@ object_1 = Planet(0,0,0,1,'')
 
 
 sky=Sky(texture="assets/space")
-EditorCamera()
+#EditorCamera()
 
 player = FirstPersonController(model="sphere",
                                texture="assets/space",
-                               position=(0, 50, 0),
+                               position=(80, 0, 0),
                                gravity=0,
-                               speed=100,
+                               speed=1,
                                collider='sphere'
                                )
 

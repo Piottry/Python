@@ -4,6 +4,7 @@ from random import randint
 from ursina.shaders import lit_with_shadows_shader
 from math import degrees
 
+
 app = Ursina()
 
 window.title = 'Game'

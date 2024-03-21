@@ -30,31 +30,16 @@ def update():
         sun.rotation_y+=0.000034
         mercury.rotation_y+=0.007
         venus.rotation_y+=0.0000017
-        earth.rotation_y+=0.00041*100
+        earth.rotation_y+=0.00041
         mars.rotation_y+=0.0004
         jupiter.rotation_y+=0.001
-        saturn.rotation_y+=0.0022
+
+        saturn.rotation_y+=0.01#0.0022
+        saturnRing.rotation_y+=0.01
+
         uranus.rotation_y+=0.00058
         neptune.rotation_y+=0.00062
-        saturnRing.rotation_y+=0.5
         
-
-
-
-
-
-
-
-
-
-
-    
-
-
-    '''
-    if player.intersects:
-        player.y-=100 * time.dt
-    '''
 
 
 
@@ -98,7 +83,7 @@ class Planet(Entity):
 
 
 
-sun = Planet(0,0,0,100,'assets/8k_sun')
+sun = Planet(0,0,0,50,'assets/8k_sun')
 sun.sun=True
 
 
@@ -127,31 +112,28 @@ moon = Planet(80,2,0,0.05,'assets/Moon')
 
 ### TRUC ###
 saturnRing=Entity(model="assets/saturnring.obj",
-            shader = lit_with_shadows_shader,
-            scale=1,
-            parent=saturn,
-            texture='assets/saturn_ring',
-            position=(0, 0, 0),
-            rotation=(0,0,23),
-            collider='mesh'
-
-            )
+                scale=1,
+                parent=saturn,
+                texture='assets/saturn_ring',
+                position=(0, 0, 0),
+                rotation=(0,0,23),
+                )
 
 
 
 
 sky=Sky(texture="assets/space")
-#EditorCamera()
+EditorCamera()
 
 player = FirstPersonController(model="sphere",
-                               texture="assets/space",
-                               position=(80, 0, 0),
+                               color='white',
+                               height=0,
+                               position=(100, 0, 1),
                                gravity=0,
-                               speed=100,
-                               collider='sphere'
+                               speed=5,
+                               collider='sphere',
                                )
 
-camera.clip_plane_far=909900
 
 
 app.run()

@@ -36,6 +36,10 @@ def update():
         saturn.rotation_y+=0.0022
         uranus.rotation_y+=0.00058
         neptune.rotation_y+=0.00062
+        saturnRing.rotation_y+=0.5
+        
+
+
 
 
 
@@ -118,11 +122,16 @@ moon = Planet(80,2,0,0.05,'assets/Moon')
 
 
 ### TRUC ###
-test=Entity(model="assets/ggg.obj",
+saturnRing=Entity(model="assets/ggg.obj",
             scale=1,
-            color=color.white,
-            position=(140, 0, 0),
+            parent=saturn,
+            texture='assets/saturn_ring',
+            position=(0, 0, 0),
+            rotation=(0,0,23),
             collider='mesh'
+
+
+
 
 
 )
@@ -137,7 +146,7 @@ player = FirstPersonController(model="sphere",
                                texture="assets/space",
                                position=(80, 0, 0),
                                gravity=0,
-                               speed=1,
+                               speed=100,
                                collider='sphere'
                                )
 

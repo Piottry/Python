@@ -1,5 +1,5 @@
 from ursina.shaders import lit_with_shadows_shader
-from ursina import Entity, time, sin, cos
+from ursina import Entity, time, sin, cos, Vec3
 from math import radians
 
 class CelestialBodies(Entity):
@@ -10,12 +10,15 @@ class CelestialBodies(Entity):
         self.collider = 'sphere'
         self.position = position
         self.orbitSpeed = orbitSpeed
-        self.rotationSpeed = rotationSpeed
+
         self.orbitRadius = orbitRadius
         self.scale = scale
+
         self.shader = lit_with_shadows_shader
         self.texture = texture
+
         self.rotation= rotation #apply tilt to planet
+        self.rotationSpeed = rotationSpeed
         
     def update(self):
         self.rotation += [i*time.dt for i in self.rotationSpeed] #self.rotationSpeed*time.dt

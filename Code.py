@@ -31,27 +31,27 @@ def input(key):
 
 
 
-
+"""
 sun=CelestialBodies(position=(sheet['B2'].value,sheet['C2'].value,sheet['D2'].value),
                     orbitSpeed =(sheet['E2'].value, sheet['F2'].value ,sheet['G2'].value),
                     rotation=(sheet['H2'].value,sheet['I2'].value,sheet['J2'].value),
                     orbitRadius=sheet['K2'].value, 
-                    rotationSpeed=[0,1.99,0],
+                    rotationSpeed=[sheet['L2'].value, sheet['M2'].value ,sheet['N2'].value],
                     scale=sheet['O2'].value,
                     texture=sheet['P2'].value
                     )
 sun.sun=True
+"""
 
+### PLANETS & SUN ###
+planets_sun=[]
 
-### PLANETS ###
-planets=[]
-
-for i in range (3,10):
-    planets.append(CelestialBodies(position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
+for i in range (2,10):
+    planets_sun.append(CelestialBodies(position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
                                  orbitSpeed =(sheet['E'+str(i)].value, sheet['F'+str(i)].value ,sheet['G'+str(i)].value),
                                  rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
                                  orbitRadius=sheet['K'+str(i)].value, 
-                                 rotationSpeed=[0,10,89,0],
+                                 rotationSpeed=[sheet['L'+str(i)].value, sheet['M'+str(i)].value ,sheet['N'+str(i)].value],
                                  scale=sheet['O'+str(i)].value,
                                  texture=sheet['P'+str(i)].value
                                  )
@@ -60,8 +60,9 @@ for i in range (3,10):
 
 
 
-"""
+
 ### PLANETS ###
+"""
 mercury=CelestialBodies(position=(sheet['B3'].value,sheet['C3'].value,sheet['D3'].value),
                         orbitSpeed =(sheet['E3'].value, sheet['F3'].value ,sheet['G3'].value),
                         rotation=(sheet['H3'].value,sheet['I3'].value,sheet['J3'].value),

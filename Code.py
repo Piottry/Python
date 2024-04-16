@@ -4,6 +4,7 @@ from random import randint
 from ursina.shaders import lit_with_shadows_shader
 from math import degrees
 import openpyxl as op 
+
 from Classe.SolarSystem import SolarSystem
 from Classe.CelestialBodies import CelestialBodies
 
@@ -13,15 +14,17 @@ sheet=data["Feuil2"]
 app = Ursina()
 
 
+
 window.title = 'Game'
-window.fps_counter.enabled = True
-max_frames = 120
-window.fps_counter.max = 120
+window.fps_counter.enabled = False
+window.fullscreen=True
 
 app.time=0
 app.time_dt=0
 
-
+#####################
+### Key detection ###
+#####################
 def input(key):
     global paused
     if held_keys['space']:
@@ -29,25 +32,37 @@ def input(key):
     if held_keys['control']:
         player.y -= 100 * time.dt
 
+#####################
+### Planets & Sun ###
+#####################
 
-
-"""
-sun=CelestialBodies(position=(sheet['B2'].value,sheet['C2'].value,sheet['D2'].value),
-                    orbitSpeed =(sheet['E2'].value, sheet['F2'].value ,sheet['G2'].value),
-                    rotation=(sheet['H2'].value,sheet['I2'].value,sheet['J2'].value),
-                    orbitRadius=sheet['K2'].value, 
-                    rotationSpeed=[sheet['L2'].value, sheet['M2'].value ,sheet['N2'].value],
-                    scale=sheet['O2'].value,
-                    texture=sheet['P2'].value
-                    )
-sun.sun=True
-"""
-
-### PLANETS & SUN ###
 planets_sun=[]
+i=2
+while sheet['A'+str(i)].value:
+    planets_sun.append(CelestialBodies(name=sheet['A'+str(i)].value,
+                                       position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
+                                       orbitSpeed =(sheet['E'+str(i)].value, sheet['F'+str(i)].value ,sheet['G'+str(i)].value),
+                                       rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
+                                       orbitRadius=sheet['K'+str(i)].value, 
+                                       rotationSpeed=[sheet['L'+str(i)].value, sheet['M'+str(i)].value ,sheet['N'+str(i)].value],
+                                       scale=sheet['O'+str(i)].value,
+                                       texture=sheet['P'+str(i)].value
+                                       )
+                                       )
+    i+=1
+i+=1
+planets_sun[0].sun=True
 
-for i in range (2,10):
-    planets_sun.append(CelestialBodies(position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
+
+
+
+#############
+### Moons ###
+#############
+moons=[]
+while sheet['A'+str(i)].value:
+    moons.append(CelestialBodies(name=sheet['A'+str(i)].value,
+                                 position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
                                  orbitSpeed =(sheet['E'+str(i)].value, sheet['F'+str(i)].value ,sheet['G'+str(i)].value),
                                  rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
                                  orbitRadius=sheet['K'+str(i)].value, 
@@ -56,110 +71,47 @@ for i in range (2,10):
                                  texture=sheet['P'+str(i)].value
                                  )
                                  )
+    i+=1
+i+=1
+
+#############
+### Other ###
+#############
+other=[]
+while sheet['A'+str(i)].value:
+    other.append(CelestialBodies(name=sheet['A'+str(i)].value,
+                                 position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
+                                       orbitSpeed =(sheet['E'+str(i)].value, sheet['F'+str(i)].value ,sheet['G'+str(i)].value),
+                                       rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
+                                       orbitRadius=sheet['K'+str(i)].value, 
+                                       rotationSpeed=[sheet['L'+str(i)].value, sheet['M'+str(i)].value ,sheet['N'+str(i)].value],
+                                       scale=sheet['O'+str(i)].value,
+                                       texture=sheet['P'+str(i)].value
+                                       )
+                                       )
+    i+=1
 
 
 
 
 
-### PLANETS ###
-"""
-mercury=CelestialBodies(position=(sheet['B3'].value,sheet['C3'].value,sheet['D3'].value),
-                        orbitSpeed =(sheet['E3'].value, sheet['F3'].value ,sheet['G3'].value),
-                        rotation=(sheet['H3'].value,sheet['I3'].value,sheet['J3'].value),
-                        orbitRadius=sheet['K3'].value, 
-                        rotationSpeed=[0,10,89,0],
-                        scale=sheet['O3'].value,
-                        texture=sheet['P3'].value
-                        )
-venus=CelestialBodies(position=(sheet['B4'].value,sheet['C4'].value,sheet['D4'].value),
-                      orbitSpeed =(sheet['E4'].value, sheet['F4'].value ,sheet['G4'].value),
-                      rotation=(sheet['H4'].value,sheet['I4'].value,sheet['J4'].value),
-                      orbitRadius=sheet['K4'].value, 
-                      rotationSpeed=[0,6.52,0],
-                      scale=sheet['O4'].value,
-                      texture=sheet['P4'].value
-                      )
-earth=CelestialBodies(position=(sheet['B5'].value,sheet['C5'].value,sheet['D5'].value),
-                      orbitSpeed =(sheet['E5'].value, sheet['F5'].value ,sheet['G5'].value),
-                      rotation=(sheet['H5'].value,sheet['I5'].value,sheet['J5'].value),
-                      orbitRadius=sheet['K5'].value, 
-                      rotationSpeed=[0,17000,0],
-                      scale=sheet['O5'].value,
-                      texture=sheet['P5'].value
-                      )
-mars=CelestialBodies(position=(sheet['B6'].value,sheet['C6'].value,sheet['D6'].value),
-                     orbitSpeed =(sheet['E6'].value, sheet['F6'].value ,sheet['G6'].value),
-                     rotation=(sheet['H6'].value,sheet['I6'].value,sheet['J6'].value),
-                     orbitRadius=sheet['K6'].value, 
-                     rotationSpeed=[0,868.22,0],
-                     scale=sheet['O6'].value,
-                     texture=sheet['P6'].value
-                     )
-jupiter=CelestialBodies(position=(sheet['B7'].value,sheet['C7'].value,sheet['D7'].value),
-                        orbitSpeed =(sheet['E7'].value, sheet['F7'].value ,sheet['G7'].value),
-                        rotation=(sheet['H7'].value,sheet['I7'].value,sheet['J7'].value),
-                        orbitRadius=sheet['K7'].value, 
-                        rotationSpeed=[0,47051,0],
-                        scale=sheet['O7'].value,
-                        texture=sheet['P7'].value
-                        )
-saturn=CelestialBodies(position=(sheet['B8'].value,sheet['C8'].value,sheet['D8'].value),
-                       orbitSpeed =(sheet['E8'].value, sheet['F8'].value ,sheet['G8'].value),
-                       rotation=(sheet['H8'].value,sheet['I8'].value,sheet['J8'].value),
-                       orbitRadius=sheet['K8'].value,
-                       rotationSpeed=[0,34821,0],
-                       scale=sheet['O8'].value,
-                       texture=sheet['P8'].value
-                       )
-uranus=CelestialBodies(position=(sheet['B9'].value,sheet['C9'].value,sheet['D9'].value),
-                       orbitSpeed =(sheet['E9'].value, sheet['F9'].value ,sheet['G9'].value),
-                       rotation=(sheet['H9'].value,sheet['I9'].value,sheet['J9'].value),
-                       orbitRadius=sheet['K9'].value, 
-                       rotationSpeed=[0,9320,0],
-                       scale=sheet['O9'].value,
-                       texture=sheet['P9'].value
-                       )
-neptune=CelestialBodies(position=(sheet['B10'].value,sheet['C10'].value,sheet['D10'].value),
-                        orbitSpeed =(sheet['E10'].value, sheet['F10'].value ,sheet['G10'].value),
-                        rotation=(sheet['H10'].value,sheet['I10'].value,sheet['J10'].value),
-                        orbitRadius=sheet['K10'].value, 
-                        rotationSpeed=[0,9660,0],
-                        scale=sheet['O10'].value,
-                        texture=sheet['P10'].value
-                        )
-"""
-
-
-### MOONS ###
-moon=CelestialBodies(position=(sheet['B12'].value,sheet['C12'].value,sheet['D12'].value),orbitSpeed =(sheet['E12'].value, sheet['F12'].value ,sheet['G12'].value),rotation=(sheet['H12'].value,sheet['I12'].value,sheet['J12'].value),orbitRadius=sheet['K12'].value, rotationSpeed=[0,16.7,0],scale=sheet['O12'].value,texture=sheet['P12'].value)
-dione=CelestialBodies(position=(sheet['B18'].value,sheet['C18'].value,sheet['D18'].value),orbitSpeed =(sheet['E18'].value, sheet['F18'].value ,sheet['G18'].value),rotation=(sheet['H18'].value,sheet['I18'].value,sheet['J18'].value),orbitRadius=sheet['K18'].value, rotationSpeed=[0,53.73,0],scale=sheet['O18'].value,texture=sheet['P18'].value)
-
-
-### TRUC ###
-#saturnRing=Entity(model="assets/saturnring.obj",
-                #scale=1,
-                #parent=saturn,
-                #texture='assets/saturn_ring',
-                #position=(0, 0, 0),
-                #rotation=(0,0,23),
-                #)
 
 
 
-
-sky=Sky(texture="assets/space")
+sky=Sky(texture="assets/textures/space")
 EditorCamera()
 
-player = FirstPersonController(model="sphere",
-                               color='white',
+player = FirstPersonController(model="assets/mesh/planet.obj",
+                               texture='assets/textures/uranus',
                                height=0,
                                position=(100, 0, 1),
                                gravity=0,
-                               speed=5,
-                               collider='sphere',
+                               speed=50,
+                               collider='mesh',
                                )
 
 
+PointLight(y=0,color="white10")
 
 app.run()
 

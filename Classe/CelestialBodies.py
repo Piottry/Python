@@ -4,10 +4,10 @@ from math import radians
 
 class CelestialBodies(Entity):
 
-    def __init__(self , name , position=(0,0,0) ,orbitSpeed=(0,0,0) ,rotation =(0,0,0),orbitRadius=0, rotationSpeed=[0,0,0], scale=0, texture=''):
+    def __init__(self , name , position=(0,0,0) ,orbitSpeed=(0,0,0) ,rotation =(0,0,0),orbitRadius=0, rotationSpeed=[0,0,0], scale=0, texture='',mass=0):
         super().__init__()
         self.name=name
-        self.model = '/assets/mesh/planet.obj'#'sphere'#
+        self.model = 'sphere'#'/assets/mesh/planet.obj'#
         self.collider = 'mesh'
         self.position = position
         self.orbitSpeed = orbitSpeed
@@ -15,7 +15,7 @@ class CelestialBodies(Entity):
         self.orbitRadius = orbitRadius
         self.scale = scale
 
-        #self.texture = texture
+        self.texture = texture
 
         self.rotation= rotation #apply tilt to planet
         self.rotationSpeed = rotationSpeed

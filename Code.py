@@ -46,7 +46,8 @@ while sheet['A'+str(i)].value:
                                        orbitRadius=sheet['K'+str(i)].value, 
                                        rotationSpeed=[sheet['L'+str(i)].value, sheet['M'+str(i)].value ,sheet['N'+str(i)].value],
                                        scale=sheet['O'+str(i)].value,
-                                       texture=sheet['P'+str(i)].value
+                                       texture=sheet['P'+str(i)].value,
+                                       mass=0
                                        )
                                        )
     i+=1
@@ -111,7 +112,7 @@ player = FirstPersonController(model="assets/mesh/planet.obj",
                                )
 
 
-PointLight(y=0,color="white10")
+#PointLight(y=0,color="white10")
 
 app.run()
 

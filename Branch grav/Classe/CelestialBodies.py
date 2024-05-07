@@ -16,28 +16,30 @@ class CelestialBodies(Entity):
 
         self.pos=Vec3(position)
         self.vit=Vec3(orbitSpeed)
-        self.acc=Vec3((0,0,0))
+        self.acc=Vec3((-100000000,0,0))
         self.mass=mass
         
-        self.position = (position[0]*pow(10,-6),0,0)
+        self.position = [x *pow(10,-9)  for x in self.pos]
 
         self.rotation= rotation #apply tilt to planet
         self.rotationSpeed = rotationSpeed
         
     def update(self):
-        self.rotation += [i*time.dt for i in self.rotationSpeed] #self.rotationSpeed*time.dt
-        self.acc=Vec3((-10000,0,0))
-        self.vit+=[x * 1 for x in self.acc]
-        self.pos+=[x * 1 for x in self.vit]
+        self.rotation += [i*time.dt for i in self.rotationSpeed] #0.1 s instead of time.dt ###to modify
 
-        self.position=(self.pos[0]*pow(10,-6),0,0)
+        self.vit+=[x *0.1 for x in self.acc]
+        self.pos+=[x *0.1  for x in self.vit]
 
+        self.position=[x *pow(10,-9)  for x in self.pos] #(self.pos[0]*pow(10,-9),self.pos[1]*pow(10,-9),self.pos[2]*pow(10,-9))
 
-        if self.acc[0]!=0:
-                if self.position[0]>0:
-                    self.acc[0]=-abs(self.acc[0])
-                if self.position[0]<0:
-                    self.acc[0]=abs(self.acc[0])
+        for i in range(0,2):
+             if self.acc[i]!=0:
+                if self.position[i]>0:
+                    self.acc[i]=-abs(self.acc[i])
+                if self.position[i]<0:
+                    self.acc[i]=abs(self.acc[i])
+                  
+
 
         return True
     

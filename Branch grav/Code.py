@@ -36,7 +36,40 @@ def force_gravite_p1_p2(p1,p2):
     d=(p1.pos[0]-p2.position[0],p1.pos[1]-p2.position[1],p1.pos[2]-p2.position[2])
     dist=sqrt(pow(d[0],2)+pow(d[1],2)+pow(d[2],2))
     force=-G*p2.mass/dist
-
+    '''
+    if d[0]>0 & d[0]>0 & d[0]>0:
+        p1.acc[0]=-G*p2.mass/dist
+        p1.acc[1]=-G*p2.mass/dist
+        p1.acc[2]=-G*p2.mass/dist
+    elif d[0]>0 & d[0]>0 & d[0]<0:
+        p1.acc[0]=-G*p2.mass/dist
+        p1.acc[1]=-G*p2.mass/dist
+        p1.acc[2]=G*p2.mass/dist
+    elif d[0]<0 & d[0]>0 & d[0]<0:
+        p1.acc[0]=G*p2.mass/dist
+        p1.acc[1]=-G*p2.mass/dist
+        p1.acc[2]=G*p2.mass/dist
+    elif d[0]<0 & d[0]>0 & d[0]>0:
+        p1.acc[0]=G*p2.mass/dist
+        p1.acc[1]=-G*p2.mass/dist
+        p1.acc[2]=-G*p2.mass/dist
+    elif d[0]>0 & d[0]<0 & d[0]>0:
+        p1.acc[0]=-G*p2.mass/dist
+        p1.acc[1]=G*p2.mass/dist
+        p1.acc[2]=-G*p2.mass/dist
+    elif d[0]>0 & d[0]<0 & d[0]<0:
+        p1.acc[0]=-G*p2.mass/dist
+        p1.acc[1]=G*p2.mass/dist
+        p1.acc[2]=G*p2.mass/dist
+    elif d[0]<0 & d[0]<0 & d[0]<0:
+        p1.acc[0]=G*p2.mass/dist
+        p1.acc[1]=G*p2.mass/dist
+        p1.acc[2]=G*p2.mass/dist
+    elif d[0]<0 & d[0]<0 & d[0]>0:
+        p1.acc[0]=G*p2.mass/dist
+        p1.acc[1]=G*p2.mass/dist
+        p1.acc[2]=-G*p2.mass/dist
+    '''
     return force
 
 G=6.67428*pow(10,-11)
@@ -48,13 +81,17 @@ G=6.67428*pow(10,-11)
 
 planets_sun=[]
 i=5
+
+#####################
+###  Real values  ###
+#####################
 planets=CelestialBodies(name=sheet['A'+str(i)].value,
                             scale=sheet['O'+str(i)].value,
                             texture=sheet['P'+str(i)].value,
                                        
                             #position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
-                            position=(149597887.5,0,0),
-                            orbitSpeed =(0,0,0),
+                            position=(149597887500,0,0),
+                            orbitSpeed =(1000000000,0,0),
                                        
                                        
                             rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
@@ -117,9 +154,10 @@ sky=Sky(texture="assets/textures/space")
 EditorCamera()
 
 player = FirstPersonController(model="assets/mesh/planet.obj",
-                               texture='assets/textures/uranus',
+                               color='white',
+                               alpha=0.2,
                                height=0,
-                               position=(100, 0, 1),
+                               position=(100, 0, 0),
                                gravity=0,
                                speed=50,
                                collider='mesh',
@@ -129,8 +167,8 @@ def update():
 
     force=force_gravite_p1_p2(planets,soleil)
     #print(force)
-    planets.acc[0]=force
-    print(planets.position[0])
+    #planets.acc[0]=force
+    print(force)
 
 
     

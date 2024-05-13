@@ -5,7 +5,7 @@ from math import *
 
 class CelestialBodies(Entity):
 
-    def __init__(self , name , position=(0,0,0) ,orbitSpeed=(0.0,0.0,0.0) ,rotation =(0,0,0), rotationSpeed=[0,0,0], scale=0, texture='',mass=0):
+    def __init__(self , name , position=(0,0,0) ,vitesse=(0,0,0) ,rotation =(0,0,0), rotationSpeed=[0,0,0], scale=0, texture='',mass=0,time=1,jour=1):
         super().__init__()
         self.name=name
         self.model = 'sphere'#'/assets/mesh/planet.obj'#
@@ -13,10 +13,13 @@ class CelestialBodies(Entity):
         self.scale = scale
         self.texture = texture
 
+        self.time=time
+        self.jour=jour
 
         self.pos=Vec3(position)
-        self.vit=Vec3(orbitSpeed)
-        self.acc=Vec3((-100000000,0,0))
+        self.vit=Vec3(vitesse)
+        self.acc=Vec3((0,0,0))
+        
         self.mass=mass
         
         self.position = [x *pow(10,-9)  for x in self.pos]
@@ -25,24 +28,17 @@ class CelestialBodies(Entity):
         self.rotationSpeed = rotationSpeed
         
     def update(self):
-        self.rotation += [i*time.dt for i in self.rotationSpeed] #0.1 s instead of time.dt ###to modify
+        
+        self.rotation += [i *(360*time.dt/self.time) for i in self.rotationSpeed] 
+        self.vit+=[x *(self.jour*time.dt/self.time) for x in self.acc]
+        self.pos+=[x *(self.jour*time.dt/self.time)  for x in self.vit]
 
-        self.vit+=[x *0.1 for x in self.acc]
-        self.pos+=[x *0.1  for x in self.vit]
-
-        self.position=[x *pow(10,-9)  for x in self.pos] #(self.pos[0]*pow(10,-9),self.pos[1]*pow(10,-9),self.pos[2]*pow(10,-9))
-
-        for i in range(0,2):
-             if self.acc[i]!=0:
-                if self.position[i]>0:
-                    self.acc[i]=-abs(self.acc[i])
-                if self.position[i]<0:
-                    self.acc[i]=abs(self.acc[i])
-                  
+        self.position=[x *pow(10,-9)  for x in self.pos]
+               
 
 
         return True
-    
+
     
    
         

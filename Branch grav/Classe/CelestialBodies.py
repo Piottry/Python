@@ -5,7 +5,7 @@ from math import *
 
 class CelestialBodies(Entity):
 
-    def __init__(self , name , position=(0,0,0) ,vitesse=(0,0,0) ,rotation =(0,0,0), rotationSpeed=[0,0,0], scale=0, texture='',mass=0,time=1,jour=1):
+    def __init__(self , name, scale=1 , texture='', position=(0,0,0) ,vitesse=(0,0,0) ,rotation =(0,0,0), rotationSpeed=[0,0,0],mass=0,time=1,jour=1):
         super().__init__()
         self.name=name
         self.model = 'sphere'#'/assets/mesh/planet.obj'#

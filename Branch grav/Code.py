@@ -143,10 +143,10 @@ G=6.67428*pow(10,-11)       # Gravitational constant
 ### Planets & Sun ###
 #####################
 
-planets_sun=[]
-
-i=3
-planets_mercure=CelestialBodies(name=sheet['A'+str(i)].value,
+planets=[]
+for i in range(3,7):
+    print("test")
+    planets.append(CelestialBodies(name=sheet['A'+str(i)].value,
                         scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
 
@@ -160,22 +160,8 @@ planets_mercure=CelestialBodies(name=sheet['A'+str(i)].value,
                         time=10,     # One day = time second (10 s)
                         jour=sheet['Q'+str(i)].value
                         )
+    )
 
-i=5
-planets_terre=CelestialBodies(name=sheet['A'+str(i)].value,
-                        scale=sheet['B'+str(i)].value,
-                        texture=sheet['C'+str(i)].value,
-
-                        position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
-                        vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
-
-                        rotation=(sheet['J'+str(i)].value,sheet['K'+str(i)].value,sheet['L'+str(i)].value),
-                        rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
-
-                        mass=sheet['P'+str(i)].value,      # Mass of the planet
-                        time=1,     # One day = time second (10 s)
-                        jour=sheet['Q'+str(i)].value
-                        )
 
 i=8
 
@@ -256,10 +242,9 @@ player = FirstPersonController(model="assets/mesh/planet.obj",
                                )
 
 def update():
-    force_gravite_p1_p2(planets_mercure,soleil)
-    force_gravite_p1_p2(planets_terre,soleil)
+    for i in range(0,3):
+        force_gravite_p1_p2(planets[i],soleil)
     force_gravite_p1_p2(planets_saturn,soleil)
-    print(planets_mercure.pos)
 
 
 

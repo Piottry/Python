@@ -29,12 +29,12 @@ class CelestialBodies(Entity):
         
     def update(self):
         
-        self.rotation += [i *(360*time.dt/self.time) for i in self.rotationSpeed] 
-        self.vit+=[x *(self.jour*time.dt/self.time) for x in self.acc]
-        self.pos+=[x *(self.jour*time.dt/self.time)  for x in self.vit]
+        self.rotation[1] +=360*0.01
+        self.vit+=[x * time.dt*86164.1 for x in self.acc]
+        self.pos+=[x * time.dt*86164.1  for x in self.vit]
 
         self.position=[x *pow(10,-9)  for x in self.pos]
-               
+
 
 
         return True

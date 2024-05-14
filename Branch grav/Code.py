@@ -144,8 +144,7 @@ G=6.67428*pow(10,-11)       # Gravitational constant
 #####################
 
 planets=[]
-for i in range(3,7):
-    print("test")
+for i in range(3,6):
     planets.append(CelestialBodies(name=sheet['A'+str(i)].value,
                         scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
@@ -157,14 +156,14 @@ for i in range(3,7):
                         rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
 
                         mass=sheet['P'+str(i)].value,      # Mass of the planet
-                        time=10,     # One day = time second (10 s)
+                        time=100,     # One day = time second (10 s)
                         jour=sheet['Q'+str(i)].value
                         )
     )
 
 
 i=8
-
+'''
 planets_saturn=CelestialBodies(name=sheet['A'+str(i)].value,
                         scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
@@ -179,7 +178,7 @@ planets_saturn=CelestialBodies(name=sheet['A'+str(i)].value,
                         time=0.1,     # One day = time second (10 s)
                         jour=sheet['Q'+str(i)].value
                         )
-
+'''
 
 
 
@@ -187,7 +186,7 @@ soleil=Entity(model = '/assets/mesh/planet.obj',
                 position=(0,0,0),
                 pos=(0,0,0),
                 texture='assets/textures/8k_sun',
-                scale=100,
+                scale=50,
                 mass=1.988*pow(10,30)
 )
 
@@ -235,16 +234,21 @@ player = FirstPersonController(model="assets/mesh/planet.obj",
                                texture='space.png',
                                alpha=0.2,
                                height=0,
-                               position=(100, 0, 0),
+                               position=(planets[0].pos[0]*pow(10,-9), planets[0].pos[1]*pow(10,-9), planets[0].pos[2]*pow(10,-9)),
                                gravity=0,
                                speed=50,
                                collider='mesh',
                                )
 
 def update():
-    for i in range(0,3):
+
+
+    ###################
+    # Sun Interaction #
+    ###################
+    for i in range(0,len(planets)):
         force_gravite_p1_p2(planets[i],soleil)
-    force_gravite_p1_p2(planets_saturn,soleil)
+
 
 
 

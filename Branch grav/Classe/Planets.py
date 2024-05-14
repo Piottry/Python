@@ -3,9 +3,9 @@ from ursina import Entity, time, sin, cos, Vec3
 from math import *
 
 
-class CelestialBodies(Entity):
+class Planets(Entity):
 
-    def __init__(self , name, scale=1 , texture='', position=(0,0,0) ,vitesse=(0,0,0) ,rotation =(0,0,0), rotationSpeed=[0,0,0],mass=0,time=1,jour=1):
+    def __init__(self , name, scale=1 , texture='',position=(0,0,0),vitesse=(0,0,0),equator=0,obliquity=0, rotationSpeed=[0,0,0],mass=0,time=1,jour=1,pause=True):
         super().__init__()
         self.name=name
         self.model = 'sphere'#'/assets/mesh/planet.obj'#
@@ -13,8 +13,10 @@ class CelestialBodies(Entity):
         self.scale = scale
         self.texture = texture
 
+        self.pause_time=pause
+
         self.time=time
-        self.jour=jour
+        self.jour_propre=jour
 
         self.pos=Vec3(position)
         self.vit=Vec3(vitesse)
@@ -24,16 +26,19 @@ class CelestialBodies(Entity):
         
         self.position = [x *pow(10,-9)  for x in self.pos]
 
-        self.rotation= rotation #apply tilt to planet
+        self.rotation= (equator,0,0)
         self.rotationSpeed = rotationSpeed
         
     def update(self):
         
-        self.rotation[1] +=360*0.01
-        self.vit+=[x * time.dt*86164.1 for x in self.acc]
-        self.pos+=[x * time.dt*86164.1  for x in self.vit]
+        if self.pause_time==False:
+            self.rotation +=[x *360*time.dt*self.time/self.jour_propre for x in self.rotationSpeed]
 
-        self.position=[x *pow(10,-9)  for x in self.pos]
+            
+            self.vit+=[x * time.dt*self.time for x in self.acc]
+            self.pos+=[x * time.dt*self.time  for x in self.vit]
+
+            self.position=[x *pow(10,-9)  for x in self.pos]
 
 
 

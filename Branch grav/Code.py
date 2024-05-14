@@ -6,7 +6,8 @@ from math import degrees,atan,cos,sin
 import openpyxl as op 
 
 from Classe.SolarSystem import SolarSystem
-from Classe.CelestialBodies import CelestialBodies
+from Classe.Planets import  Planets
+from Classe.Sun import Sun
 
 data=op.load_workbook("Masses astres.xlsx")
 sheet=data["Feuil2"]
@@ -28,16 +29,22 @@ app.time_dt=0
 def input(key):
     global paused
     if held_keys['space']:
-        player.y += 100 * time.dt
+        player.y += player.speed * time.dt/10
     if held_keys['control']:
-        player.y -= 100 * time.dt
+        player.y -= player.speed * time.dt/10
+    if held_keys['p']:
+        global pause_time 
+        pause_time  = not pause_time
+        for i in range(0,len(planets)):
+            planets[i].pause_time=pause_time
 
+pause_time =True
 ########################
 ### Gravity function ###
 ########################
 def force_gravite_p1_p2(p1,p2):
     d=[p1.pos[0]-p2.pos[0],p1.pos[1]-p2.pos[1],p1.pos[2]-p2.pos[2]]     # Distance between the 2 objects in x y & z coordinates
-
+    acc=[0,0,0]
 
     dist=sqrt(pow(d[0],2)+pow(d[1],2)+pow(d[2],2))      # Straight distance
     
@@ -47,94 +54,94 @@ def force_gravite_p1_p2(p1,p2):
     ### Calculates and assigns the accelerations, taking into account the position of the 2 objects ###
 
     if d[0]==0 and d[1]==0 and d[2]==0: # If the 2 objects have the same center, same x y and z coordinates
-        p1.acc[0]=-p1.acc[0]
-        p1.acc[1]=-p1.acc[1]
-        p1.acc[2]=-p1.acc[2]
+        acc[0]=-p1.acc[0]
+        acc[1]=-p1.acc[1]
+        acc[2]=-p1.acc[2]
     
     elif d[0]==0 and d[1]==0:           # If the 2 objects have the same x and y coordinates
-        p1.acc[0]=0
-        p1.acc[1]==0
+        acc[0]=0
+        acc[1]==0
         if d[2]>0:
-            p1.acc[2]==-force
+            acc[2]==-force
         else:
-            p1.acc[2]==force
+            acc[2]==force
     
     elif d[0]==0 and d[2]==0:           # If the 2 objects have the same x and z coordinates
-        p1.acc[0]=0
-        p1.acc[2]==0
+        acc[0]=0
+        acc[2]==0
         if d[1]>0:
-            p1.acc[1]==-force
+            acc[1]==-force
         else:
-            p1.acc[1]==force
+            acc[1]==force
 
     elif d[1]==0 and d[2]==0:           # If the 2 objects have the same x and z coordinates
-        p1.acc[1]=0
-        p1.acc[2]==0
+        acc[1]=0
+        acc[2]==0
         if d[0]>0:
-            p1.acc[0]==-force
+            acc[0]==-force
         else:
-            p1.acc[0]==force
+            acc[0]==force
     
     elif d[0]==0:                       # If the 2 objects have the same x coordinate
         if d[1]>0:
-            p1.acc[1]=-force*cos(atan(sqrt(pow(d[2],2))/d[1]))
+            acc[1]=-force*cos(atan(sqrt(pow(d[2],2))/d[1]))
         elif d[1]<0:
-            p1.acc[1]=force*cos(atan(sqrt(pow(d[2],2))/d[1]))
+            acc[1]=force*cos(atan(sqrt(pow(d[2],2))/d[1]))
         
         if d[2]>0:
-            p1.acc[2]=-force
+            acc[2]=-force
         else:
-            p1.acc[2]=force
+            acc[2]=force
             
     elif d[1]==0:                       # If the 2 objects have the same y coordinate
         if d[0]>0:
             if d[2]>0:
-                p1.acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
             else:
-                p1.acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
         else:
             if d[2]>0:
-                p1.acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
             else:
-                p1.acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
 
     elif d[2]==0:                       # If the 2 objects have the same z coordinate
         if d[1]>0:
-            p1.acc[1]=-force*cos(atan(sqrt(pow(d[2],2))/d[1]))
+            acc[1]=-force*cos(atan(sqrt(pow(d[2],2))/d[1]))
         elif d[1]<0:
-            p1.acc[1]=force*cos(atan(sqrt(pow(d[2],2))/d[1]))
+            acc[1]=force*cos(atan(sqrt(pow(d[2],2))/d[1]))
         
         if d[0]>0:
-            p1.acc[0]=-force
+            acc[0]=-force
         else:
-            p1.acc[0]=force
+            acc[0]=force
     
     else:                               # If the 2 objects have different coordinate
         if d[1]>0:
-            p1.acc[1]=-force*cos(atan(sqrt(pow(d[0],2)+pow(d[2],2))/d[1]))
+            acc[1]=-force*cos(atan(sqrt(pow(d[0],2)+pow(d[2],2))/d[1]))
         elif d[1]<0:
-            p1.acc[1]=force*cos(atan(sqrt(pow(d[0],2)+pow(d[2],2))/d[1]))
+            acc[1]=force*cos(atan(sqrt(pow(d[0],2)+pow(d[2],2))/d[1]))
         
         if d[0]>0:
             if d[2]>0:
-                p1.acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
             elif d[2]<0:
-                p1.acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=-force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
         elif d[0]<0:
             if d[2]>0:
-                p1.acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=-force*cos(atan(abs(d[0])/abs(d[2])))
             elif d[2]<0:
-                p1.acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
-                p1.acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
+                acc[0]=force*cos((pi/2) - atan(abs(d[0])/abs(d[2])))
+                acc[2]=force*cos(atan(abs(d[0])/abs(d[2])))
 
-    return True
+    return acc
 
 G=6.67428*pow(10,-11)       # Gravitational constant 
 
@@ -144,51 +151,39 @@ G=6.67428*pow(10,-11)       # Gravitational constant
 #####################
 
 planets=[]
-for i in range(3,6):
-    planets.append(CelestialBodies(name=sheet['A'+str(i)].value,
+for i in range(3,11):
+    planets.append(Planets(name=sheet['A'+str(i)].value,
                         scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
 
                         position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
                         vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
 
-                        rotation=(sheet['J'+str(i)].value,sheet['K'+str(i)].value,sheet['L'+str(i)].value),
+                        obliquity=sheet['J'+str(i)].value,
+                        equator=sheet['K'+str(i)].value,
                         rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
 
                         mass=sheet['P'+str(i)].value,      # Mass of the planet
-                        time=100,     # One day = time second (10 s)
+                        time=86164.1,#3600,#86164.1,
                         jour=sheet['Q'+str(i)].value
                         )
     )
 
 
-i=8
-'''
-planets_saturn=CelestialBodies(name=sheet['A'+str(i)].value,
-                        scale=sheet['B'+str(i)].value,
-                        texture=sheet['C'+str(i)].value,
 
-                        position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
-                        vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
+sun=Sun(name=sheet['A2'].value,
+        scale=sheet['B2'].value,
+        texture=sheet['C2'].value,
 
-                        rotation=(sheet['J'+str(i)].value,sheet['K'+str(i)].value,sheet['L'+str(i)].value),
-                        rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
+        obliquity=sheet['J'+str(i)].value,
+        equator=sheet['K'+str(i)].value,
+        rotationSpeed=[sheet['M2'].value,sheet['N2'].value,sheet['O2'].value],     # Mass of the planet
 
-                        mass=sheet['P'+str(i)].value,      # Mass of the planet
-                        time=0.1,     # One day = time second (10 s)
-                        jour=sheet['Q'+str(i)].value
-                        )
-'''
-
-
-
-soleil=Entity(model = '/assets/mesh/planet.obj',
-                position=(0,0,0),
-                pos=(0,0,0),
-                texture='assets/textures/8k_sun',
-                scale=50,
-                mass=1.988*pow(10,30)
+        mass=sheet['P2'].value,      # Mass of the planet
+        time=86164.1,#3600,#86164.1,
+        jour=sheet['Q2'].value
 )
+
 
 
 
@@ -234,20 +229,53 @@ player = FirstPersonController(model="assets/mesh/planet.obj",
                                texture='space.png',
                                alpha=0.2,
                                height=0,
-                               position=(planets[0].pos[0]*pow(10,-9), planets[0].pos[1]*pow(10,-9), planets[0].pos[2]*pow(10,-9)),
+                               position=(100,20,0),
                                gravity=0,
                                speed=50,
                                collider='mesh',
                                )
 
 def update():
+    pos_player_6000=0
+    if distance(player,sun)<6000:
+        dist=distance(player,planets[0])
+        for i in range(0,len(planets)):
+            if dist>distance(player,planets[i]):
+                dist=distance(player,planets[i])       
+        player.speed=2.5*dist
+    else:
+        player.position=pos_player_6000
+    
+    pos_player_6000=player.position
 
 
-    ###################
-    # Sun Interaction #
-    ###################
-    for i in range(0,len(planets)):
-        force_gravite_p1_p2(planets[i],soleil)
+
+    global pause_time 
+    if pause_time ==False:
+        acc=[]
+
+        ###################
+        # Sun Interaction #
+        ###################
+        for i in range(0,len(planets)):
+            acc.append(force_gravite_p1_p2(planets[i],sun))
+
+        ########################
+        # Planets Interactions #
+        ########################
+        for i in range(0,len(planets)):
+            for y in range(0,len(planets)):
+                if y!=i:
+                    acc[i]+=force_gravite_p1_p2(planets[i],planets[y])
+
+        ########################
+        # Planets Acceleration #
+        ########################
+        for i in range(0,len(planets)):
+            planets[i].acc=acc[i]
+
+camera.clip_plane_far = 20000
+    
 
 
 

@@ -28,12 +28,15 @@ class Planets(Entity):
 
         self.rotation= (equator,0,0)
         self.rotationSpeed = rotationSpeed
+
         
     def update(self):
         
-        if self.pause_time==False:
-            self.rotation +=[x *360*time.dt*self.time/self.jour_propre for x in self.rotationSpeed]
+        
 
+        if self.pause_time==False:
+            
+            self.rotation +=[x *360*time.dt*self.time/self.jour_propre for x in self.rotationSpeed]
             
             self.vit+=[x * time.dt*self.time for x in self.acc]
             self.pos+=[x * time.dt*self.time  for x in self.vit]

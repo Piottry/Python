@@ -2,8 +2,8 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from random import randint
 from ursina.shaders import lit_with_shadows_shader
-from ursina.lights import DirectionalLight
 from math import degrees,atan,cos,sin
+
 import openpyxl as op 
 
 from Classe.SolarSystem import SolarSystem
@@ -27,7 +27,7 @@ window.fullscreen=True
 app.time=0
 app.time_dt=0
 
-simu_time=3600#3600#86164.1
+simu_time=86164.1*365.25#3600#86164.1
 
 #####################
 ### Key detection ###
@@ -43,6 +43,7 @@ def input(key):
         pause_time  = not pause_time
         for i in range(0,len(planets)):
             planets[i].pause_time=pause_time
+            sun.pause_time=pause_time
 pause_time =True
 ########################
 ### Gravity function ###
@@ -149,15 +150,37 @@ def force_gravite_p1_p2(p1,p2):
     return acc
 G=6.67428*pow(10,-11)       # Gravitational constant 
 
+###########
+### Sun ###
+###########
+
+i=2
+sun=Sun(name=sheet['A'+str(i)].value,
+        scale=sheet['B'+str(i)].value,
+        texture=sheet['C'+str(i)].value,
+
+        position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
+        vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
+
+        obliquity=sheet['J'+str(i)].value,
+        equator=sheet['K'+str(i)].value,
+        rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
+
+        mass=sheet['P'+str(i)].value,      # Mass of the planet
+        time=simu_time,#3600,#86164.1,
+        jour=sheet['Q'+str(i)].value
+)
+
 
 #####################
 ### Planets & Sun ###
 #####################
 
 planets=[]
-for i in range(3,11):
+i+=1
+while sheet['A'+str(i)].value:
     planets.append(Planets(name=sheet['A'+str(i)].value,
-                        scale=10*sheet['B'+str(i)].value,
+                        scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
 
                         position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
@@ -172,21 +195,10 @@ for i in range(3,11):
                         jour=sheet['Q'+str(i)].value
                         )
     )
+    i+=1
+i+=1
 
 
-
-sun=Sun(name=sheet['A2'].value,
-        scale=sheet['B2'].value,
-        texture=sheet['C2'].value,
-
-        obliquity=sheet['J'+str(i)].value,
-        equator=sheet['K'+str(i)].value,
-        rotationSpeed=[sheet['M2'].value,sheet['N2'].value,sheet['O2'].value],     # Mass of the planet
-
-        mass=sheet['P2'].value,      # Mass of the planet
-        time=simu_time,#3600,#86164.1,
-        jour=sheet['Q2'].value
-)
 
 
 
@@ -217,19 +229,35 @@ i+=1
 #############
 ### Other ###
 #############
-nuage=[]
+clouds=[]
 for i in range(1,4):
-    nuage.append(Entity(model='sphere',
+    clouds.append(Entity(model='sphere',
                     collider='mesh',
                     scale=planets[2].scale+planets[2].scale*(0.008*(i+1)),
                     texture='assets/textures/clouds_'+str(i),
                     position=(planets[2].x,planets[2].y,planets[2].z),
-                    rotation=(0,randint(0,360),0),
+                    rotation=(planets[2].rotation[0],0,0),
                     alpha=0.05,
 
                     rand_num=randint(0,10000)-5000
     )
 )
+
+moon=Entity(name=sheet['A'+str(i)].value,
+            scale=sheet['B'+str(i)].value,
+            texture=sheet['C'+str(i)].value,
+
+            position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
+            vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
+
+            obliquity=sheet['J'+str(i)].value,
+            equator=sheet['K'+str(i)].value,
+            rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
+
+            mass=sheet['P'+str(i)].value,      # Mass of the planet
+            time=simu_time,
+            jour=sheet['Q'+str(i)].value
+            )
 
 
 
@@ -257,9 +285,9 @@ player = FirstPersonController(model="assets/mesh/planet.obj",
 
 def update():
 
-    ### Player speed adn map limit ###
+    ### Player speed and map limit ###
     pos_player_6000=0
-    if distance(player,sun)<6000:
+    if distance(player,sun)<7000:
         dist=distance(player,planets[0])
         for i in range(0,len(planets)):
             if dist>distance(player,planets[i]):
@@ -299,10 +327,10 @@ def update():
             planets[i].acc=acc[i]
 
         # Position of objects #
-        for i in range(0,len(nuage)):
+        for i in range(0,len(clouds)):
 
-            nuage[i].position=planets[2].position
-            nuage[i].rotation+=[x *360*time.dt*planets[2].time/(planets[2].jour_propre+nuage[i].rand_num) for x in planets[2].rotationSpeed]
+            clouds[i].position=planets[2].position
+            clouds[i].rotate([x *360*time.dt*planets[2].time/(planets[2].jour_propre+clouds[i].rand_num) for x in planets[2].rotationSpeed])
 
 
 camera.clip_plane_far = 20000

@@ -1,4 +1,4 @@
-from ursina.shaders import lit_with_shadows_shader
+'''
 from ursina import Entity, time, sin, cos, Vec3
 from math import *
 
@@ -34,6 +34,12 @@ class Sun(Entity):
 
 
         return True
+'''
+from ursina import *
+from Classe.Planets import  Planets
+
+class Sun(Planets):
+    pass
 
     
    

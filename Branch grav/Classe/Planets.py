@@ -1,4 +1,3 @@
-from ursina.shaders import lit_with_shadows_shader
 from ursina import Entity, time, sin, cos, Vec3
 from math import *
 
@@ -26,10 +25,12 @@ class Planets(Entity):
         
         self.position = [x *pow(10,-9)  for x in self.pos]
 
-        self.rotation= (equator,0,0)
+        self.rotation=(obliquity,0,0)
+
+
         self.rotationSpeed = rotationSpeed
 
-        self.rotation_directions
+
 
         
     def update(self):
@@ -38,8 +39,10 @@ class Planets(Entity):
 
         if self.pause_time==False:
             
-            self.rotation +=[x *360*time.dt*self.time/self.jour_propre for x in self.rotationSpeed]
-            
+            self.rotate([x*360*time.dt*self.time/self.jour_propre for x in self.rotationSpeed])
+
+
+
             self.vit+=[x * time.dt*self.time for x in self.acc]
             self.pos+=[x * time.dt*self.time  for x in self.vit]
 

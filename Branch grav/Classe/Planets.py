@@ -29,6 +29,8 @@ class Planets(Entity):
         self.rotation= (equator,0,0)
         self.rotationSpeed = rotationSpeed
 
+        self.rotation_directions
+
         
     def update(self):
         

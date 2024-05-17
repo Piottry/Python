@@ -2,6 +2,7 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from random import randint
 from ursina.shaders import lit_with_shadows_shader
+from ursina.lights import DirectionalLight
 from math import degrees,atan,cos,sin
 import openpyxl as op 
 
@@ -12,8 +13,11 @@ from Classe.Sun import Sun
 data=op.load_workbook("Masses astres.xlsx")
 sheet=data["Feuil2"]
 
+shader = lit_with_shadows_shader
+
 app = Ursina()
 
+Entity.default_shader=shader
 
 
 window.title = 'Game'

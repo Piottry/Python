@@ -1,23 +1,24 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from random import randint
-from ursina.shaders import lit_with_shadows_shader
 from math import degrees,atan,cos,sin
 
 import openpyxl as op 
 
-from Classe.SolarSystem import SolarSystem
 from Classe.Planets import  Planets
 from Classe.Sun import Sun
+from Classe.Moon import Moon
+from Classe.Clouds import Clouds
 
+### Load and keep in a variable the Excel file
 data=op.load_workbook("Masses astres.xlsx")
 sheet=data["Feuil2"]
 
-shader = lit_with_shadows_shader
 
+###Create our app
 app = Ursina()
 
-Entity.default_shader=shader
+
 
 
 window.title = 'Game'
@@ -27,24 +28,81 @@ window.fullscreen=True
 app.time=0
 app.time_dt=0
 
-simu_time=86164.1*365.25#3600#86164.1
+### A bunch of possible simulation time
+simu_possible_time=[1,6300,86164.1,86164.1*365.25]
+simu_time=86164.1
+simu_time_counter=2
 
 #####################
 ### Key detection ###
 #####################
 def input(key):
-    global paused
+    global simu_time_counter
+    global simu_time
+
+    ### UP and Down
     if held_keys['space']:
-        player.y += player.speed * time.dt/10
+        player.y += player.speed * time.dt
     if held_keys['control']:
-        player.y -= player.speed * time.dt/10
+        player.y -= player.speed * time.dt
+
+    ### Pause key
     if key == 'p':
         global pause_time 
         pause_time  = not pause_time
         for i in range(0,len(planets)):
             planets[i].pause_time=pause_time
-            sun.pause_time=pause_time
+        for i in range(0,len(clouds)):
+            clouds[i].pause_time=pause_time
+        
+        sun.pause_time=pause_time
+        for i in range(0,len(moons)):
+            moons[i].pause_time=pause_time
+    
+    ### Allow the player to teleport to a planet
+    if key == '1':
+        player.position=planets[0].position
+    if key == '2':
+        player.position=planets[1].position
+    if key == '3':
+        player.position=planets[2].position
+    if key == '4':
+        player.position=planets[3].position
+    if key == '5':
+        player.position=planets[4].position
+    if key == '6':
+        player.position=planets[5].position
+    if key == '7':
+        player.position=planets[6].position
+    if key == '8':
+        player.position=planets[7].position
+    
+    if key == 'escape':
+        quit()
+    
+    ### Unlock player
+    if key == 'u':          
+        player.position=(player.position[0],player.position[1]+20,player.position[2])
+
+    ### Change the time step
+    if key == 'up arrow' or key == 'down arrow':
+        if key == 'up arrow' and simu_time_counter<3:
+            simu_time_counter+=1
+            simu_time=simu_possible_time[simu_time_counter]
+        if key == 'down arrow' and simu_time_counter>0:
+            simu_time_counter-=1
+            simu_time=simu_possible_time[simu_time_counter]
+        
+        for i in range(0,len(planets)):
+            planets[i].time=simu_time
+        sun.time=simu_time
+        for i in range(0,len(moons)):
+            moons[i].time=simu_time
+        
+
 pause_time =True
+
+
 ########################
 ### Gravity function ###
 ########################
@@ -150,35 +208,38 @@ def force_gravite_p1_p2(p1,p2):
     return acc
 G=6.67428*pow(10,-11)       # Gravitational constant 
 
+
+
 ###########
 ### Sun ###
 ###########
 
 i=2
-sun=Sun(name=sheet['A'+str(i)].value,
+sun=Sun(name=sheet['A'+str(i)].value,       # Name of the entity
         scale=sheet['B'+str(i)].value,
         texture=sheet['C'+str(i)].value,
 
-        position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
-        vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
+        position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),     # Position in X Y Z 
+        vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),     # Speed in X Y Z 
 
         obliquity=sheet['J'+str(i)].value,
         equator=sheet['K'+str(i)].value,
-        rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
 
-        mass=sheet['P'+str(i)].value,      # Mass of the planet
-        time=simu_time,#3600,#86164.1,
-        jour=sheet['Q'+str(i)].value
+        rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Specifie the axes of rotation
+
+        mass=sheet['P'+str(i)].value,       # Mass of the planet
+        time=simu_time,#3600,#86164.1,      
+        jour=sheet['Q'+str(i)].value        # A full rotation around Y axe
 )
 
 
-#####################
-### Planets & Sun ###
-#####################
+###############
+### Planets ###
+###############
 
 planets=[]
 i+=1
-while sheet['A'+str(i)].value:
+while sheet['A'+str(i)].value:      # Declares planet until there are a blank on the Excel file
     planets.append(Planets(name=sheet['A'+str(i)].value,
                         scale=sheet['B'+str(i)].value,
                         texture=sheet['C'+str(i)].value,
@@ -199,152 +260,146 @@ while sheet['A'+str(i)].value:
 i+=1
 
 
-
-
-
-
-
 #############
 ### Moons ###
 #############
-'''
-i+=1
+
+moons=[]
+i=12
 while sheet['A'+str(i)].value:
-    planets_sun.append(CelestialBodies(name=sheet['A'+str(i)].value,
-                                       position=(sheet['B'+str(i)].value,sheet['C'+str(i)].value,sheet['D'+str(i)].value),
-                                       orbitSpeed =(sheet['E'+str(i)].value, sheet['F'+str(i)].value ,sheet['G'+str(i)].value),
-                                       rotation=(sheet['H'+str(i)].value,sheet['I'+str(i)].value,sheet['J'+str(i)].value),
-                                       orbitRadius=sheet['K'+str(i)].value, 
-                                       rotationSpeed=[sheet['L'+str(i)].value, sheet['M'+str(i)].value ,sheet['N'+str(i)].value],
-                                       scale=sheet['O'+str(i)].value,
-                                       texture=sheet['P'+str(i)].value,
-                                       mass=0,
-                                       alpha=0
-                                       )
-                                       )
+    moons.append(Moon(name=sheet['A'+str(i)].value,
+                    scale=sheet['B'+str(i)].value,
+                    texture=sheet['C'+str(i)].value,
+            
+                    position=(sheet['D'+str(i)].value + sheet['D'+str(sheet['R'+str(i)].value)].value  ,  sheet['E'+str(i)].value + sheet['E'+str(sheet['R'+str(i)].value)].value  ,  sheet['F'+str(i)].value),#+planets[sheet['R'+str(i)].value].position[2]
+                    vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value+sheet['I'+str(sheet['R'+str(i)].value)].value),#+sheet['I'+str(sheet['R'+str(i)].value)].value
+
+                    obliquity=sheet['J'+str(i)].value,
+                    equator=sheet['K'+str(i)].value,
+                    rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
+
+                    mass=sheet['P'+str(i)].value,      # Mass of the planet
+                    time=simu_time,
+                    jour=sheet['Q'+str(i)].value,
+
+                    planet_number=sheet['R'+str(i)].value-3     # Store the coresponding planet
+                    )
+    )
     i+=1
-i+=1
-'''
+
+
 
 #############
 ### Other ###
 #############
+
+# Earth clouds
 clouds=[]
 for i in range(1,4):
-    clouds.append(Entity(model='sphere',
-                    collider='mesh',
-                    scale=planets[2].scale+planets[2].scale*(0.008*(i+1)),
-                    texture='assets/textures/clouds_'+str(i),
-                    position=(planets[2].x,planets[2].y,planets[2].z),
-                    rotation=(planets[2].rotation[0],0,0),
-                    alpha=0.05,
+    clouds.append(Clouds(planets=planets[2],    # Earth
+                         texture_num=i,
+                         alpha=0.05         # Transparency
+                         )
+                 )
 
-                    rand_num=randint(0,10000)-5000
-    )
+### Saturn ring
+ring=Entity(model=load_model('assets/mesh/torus.obj'),
+            texture='assets/textures/saturn_ring',
+            position=planets[5].position,
+            scale=(3.5,0.1,3.5),
+            rotation=planets[5].rotation,
+            alpha=0.8
 )
 
-moon=Entity(name=sheet['A'+str(i)].value,
-            scale=sheet['B'+str(i)].value,
-            texture=sheet['C'+str(i)].value,
-
-            position=(sheet['D'+str(i)].value,sheet['E'+str(i)].value,sheet['F'+str(i)].value),
-            vitesse =(sheet['G'+str(i)].value,sheet['H'+str(i)].value,sheet['I'+str(i)].value),
-
-            obliquity=sheet['J'+str(i)].value,
-            equator=sheet['K'+str(i)].value,
-            rotationSpeed=[sheet['M'+str(i)].value,sheet['N'+str(i)].value,sheet['O'+str(i)].value],     # Mass of the planet
-
-            mass=sheet['P'+str(i)].value,      # Mass of the planet
-            time=simu_time,
-            jour=sheet['Q'+str(i)].value
-            )
 
 
 
-
-
-
-
-
+### Space
 sky=Sky(texture="assets/textures/space")
+
 EditorCamera()
 
+### Our player
 player = FirstPersonController(model="assets/mesh/planet.obj",
                                color='white',
                                texture='space.png',
                                alpha=0.2,
                                height=0,
-                               position=(100,0,20),
+                               position=(100,10,0),
                                gravity=0,
-                               speed=50,
-                               collider='mesh',
+                               speed=50
                                )
 
 
 
 
+### Update every time.dt
 def update():
-
     ### Player speed and map limit ###
-    pos_player_6000=0
-    if distance(player,sun)<7000:
+    pos_player_lim=0
+    if distance(player,sun)<10000:
         dist=distance(player,planets[0])
         for i in range(0,len(planets)):
             if dist>distance(player,planets[i]):
                 dist=distance(player,planets[i])       
         player.speed=2.5*dist
     else:
-        player.position=pos_player_6000
+        player.position=pos_player_lim
     
-    pos_player_6000=player.position
+    pos_player_lim=player.position
 
-    
-
-
-
-    global pause_time 
-    if pause_time ==False:
-        acc=[]
-
-        ###################
-        # Sun Interaction #
-        ###################
-        for i in range(0,len(planets)):
-            acc.append(force_gravite_p1_p2(planets[i],sun))
-
-        ########################
-        # Planets Interactions #
-        ########################
-        for i in range(0,len(planets)):
-            for y in range(0,len(planets)):
-                if y!=i:
-                    acc[i]+=force_gravite_p1_p2(planets[i],planets[y])
-
-        ########################
-        # Planets Acceleration #
-        ########################
-        for i in range(0,len(planets)):
-            planets[i].acc=acc[i]
-
-        # Position of objects #
-        for i in range(0,len(clouds)):
-
-            clouds[i].position=planets[2].position
-            clouds[i].rotate([x *360*time.dt*planets[2].time/(planets[2].jour_propre+clouds[i].rand_num) for x in planets[2].rotationSpeed])
-
-
-camera.clip_plane_far = 20000
     
 
 
 
-
-
-
-
     
+    
+    planet_acc=[]
+
+    ###################
+    # Sun Interaction #
+    ###################
+    for i in range(0,len(planets)):
+        planet_acc.append(force_gravite_p1_p2(planets[i],sun))
+
+    ########################
+    # Planets Interactions #
+    ########################
+    for i in range(0,len(planets)):
+        for y in range(0,len(planets)):
+            if y!=i:
+                planet_acc[i]+=force_gravite_p1_p2(planets[i],planets[y])
+        
+    ########################
+    # Planets Acceleration #
+    ########################
+    for i in range(0,len(planets)):
+        planets[i].acc=planet_acc[i]
 
 
+        
+    ######################
+    # Moons Interactions #
+    ######################
+
+    '''
+    moon_acc=0
+    #moon_acc=force_gravite_p1_p2(moons[0],planets[moons[0].planet_number])
+    moon_acc=force_gravite_p1_p2(moons[0],sun)
+    #force_gravite_p1_p2(moons[0],sun)
+    moons[0].acc=moon_acc
+    '''
+
+    #####################
+    # Ring displacement #
+    #####################
+    ring.position=planets[5].position
+    ring.rotate([x*360*time.dt*planets[5].time/planets[5].jour_propre for x in planets[5].rotationSpeed])
+
+
+camera.clip_plane_far = 20000       # Allow greatter render distance
+
+# Run the app
 app.run()
 
 
